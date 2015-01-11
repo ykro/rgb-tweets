@@ -2,10 +2,12 @@
 //#include "spark_disable_wlan.h" // For faster local debugging only
 #include "neopixel/neopixel.h"
 
-#define PIXEL_PIN D2
-#define PIXEL_COUNT 2
+#define PIXEL_PIN D0
+#define PIXEL_COUNT 8
 #define PIXEL_TYPE WS2812B
 
+#define SHORT_DELAY 250
+#define LONG_DELAY 3000
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(PIXEL_COUNT, PIXEL_PIN, PIXEL_TYPE);
 
 void setup() {
@@ -21,23 +23,53 @@ void loop() {
 }
 
 void lightLEDs(int color) {
+  int times = 3;
+  circle(color, times);
+  blink(color, times);
+  on(color, LONG_DELAY);
+  
+}
+
+void circle(int color, int times) {
   uint16_t i, j;
-  for(j=0;j < 3;j++) {
+  for(j=0;j < times;j++) {
     for(i=0;i < strip.numPixels();i++) {
       strip.setPixelColor(i, color);
       strip.show();
-      delay(500);
+      delay(SHORT_DELAY);
       strip.setPixelColor(i, strip.Color(0,0,0));
       strip.show();
     }
-  }
-  
+  }    
+}
+
+void on(int color, int keepOn) {
+  uint16_t i;
   for(i=0;i < strip.numPixels();i++) {
     strip.setPixelColor(i, color);
     strip.show();
-    delay(500);
+    delay(SHORT_DELAY);
   }
-  delay(3000);
+  delay(keepOn);
+}
+
+void blink(int color, int times) {
+  uint16_t i, j;
+  
+  for (j=0; j < times;j++) {
+    for(i=0;i < strip.numPixels();i++) {
+      strip.setPixelColor(i, strip.Color(0,0,0));
+    }
+      
+    strip.show();
+    delay(SHORT_DELAY);
+       
+    for(i=0;i < strip.numPixels();i++) {
+      strip.setPixelColor(i, color);
+    }
+    strip.show();
+    delay(SHORT_DELAY);
+  }
 }
 
 int changeColor(String args) {
